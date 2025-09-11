@@ -9,6 +9,22 @@
 //	float4x4 gWorld; 
 //};
 
+#define MaxLights 16
+
+#ifndef NUM_DIR_LIGHTS
+    #define NUM_DIR_LIGHTS 3
+#endif
+
+struct Light
+{
+    float3 Strength;
+    float FalloffStart; // point/spot light only
+    float3 Direction;   // directional/spot light only
+    float FalloffEnd;   // point/spot light only
+    float3 Position;    // point/spot light only
+    float SpotPower;
+};
+
 cbuffer cbPerObject : register(b0)
 {
     float m00;
@@ -45,18 +61,31 @@ cbuffer cbPass : register(b1)
     float gFarZ;
     float gTotalTime;
     float gDeltaTime;
+    
+    float4 gAmbient;
+    
+    Light gLights[MaxLights];
 };
+
+cbuffer cbPerMaterial : register(b2)
+{
+    float4 DiffuseAlbedo;
+    float3 FresnelR0;
+    float Roughness;
+    float4x4 MatTransform;
+}
 
 struct VertexIn
 {
 	float3 PosL  : POSITION;
-    float4 Color : COLOR;
+    float3 Normal : NORMAL;
 };
 
 struct VertexOut
 {
 	float4 PosH  : SV_POSITION;
-    float4 Color : COLOR;
+    float3 PosW : POSITION;
+    float3 NormalW : NORMAL;
 };
 
 VertexOut VS(VertexIn vin)
@@ -69,18 +98,44 @@ VertexOut VS(VertexIn vin)
                                m20, m21, m22, m23,
                                m30, m31, m32, m33);
     
-    float4 posW = mul(float4(vin.PosL, 1.0f), gWorld);
-    vout.PosH = mul(posW, gViewProj);
+    vout.PosW = mul(float4(vin.PosL, 1.0f), gWorld).xyz;
+    vout.PosH = mul(float4(vout.PosW, 1.0f), gViewProj);
 	
 	// Just pass vertex color into the pixel shader.
-    vout.Color = vin.Color;
+    vout.NormalW = mul(vin.Normal, (float3x3)gWorld);
     
     return vout;
 }
 
+float3 ComputeDirLight(Light gLight, float3 normal)
+{
+    float3 lightDir = normalize(gLight.Direction);
+    float NdotL = max(dot(lightDir, normal), 0.f);
+    return gLight.Strength * NdotL;
+}
+
 float4 PS(VertexOut pin) : SV_Target
 {
-    return pin.Color;
+    float3 N = normalize(pin.NormalW);
+    
+    float4 ambient = gAmbient * DiffuseAlbedo;
+    float4 litColor = ambient;
+    
+#if NUM_DIR_LIGHTS
+    
+    float3 dirLight = 0.0f;
+    
+    [unroll]
+    for (int i = 0; i < NUM_DIR_LIGHTS; i++)
+    {
+        dirLight += ComputeDirLight(gLights[i], N);
+    }
+    
+    litColor += float4(dirLight, 0.0f);
+    litColor.a = DiffuseAlbedo.a;
+    
+#endif
+    return litColor;
 }
 
 

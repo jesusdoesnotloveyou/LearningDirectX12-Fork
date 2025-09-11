@@ -743,7 +743,7 @@ void LitColumnsApp::BuildMaterials()
 	stone0->DiffuseSrvHeapIndex = 1;
 	stone0->DiffuseAlbedo = XMFLOAT4(Colors::LightSteelBlue);
 	stone0->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
-	stone0->Roughness = 0.3f;
+	stone0->Roughness = 0.5f;
  
 	auto tile0 = std::make_unique<Material>();
 	tile0->Name = "tile0";
@@ -758,8 +758,8 @@ void LitColumnsApp::BuildMaterials()
 	skullMat->MatCBIndex = 3;
 	skullMat->DiffuseSrvHeapIndex = 3;
 	skullMat->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	skullMat->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05);
-	skullMat->Roughness = 0.3f;
+	skullMat->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+	skullMat->Roughness = 0.9f;
 	
 	mMaterials["bricks0"] = std::move(bricks0);
 	mMaterials["stone0"] = std::move(stone0);

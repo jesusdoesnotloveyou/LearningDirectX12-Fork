@@ -197,7 +197,6 @@ bool LitWavesApp::Initialize()
 	BuildLandGeometry();
     BuildWavesGeometryBuffers();
 	BuildMaterials();
-    BuildRenderItems();
 	BuildRenderItems();
     BuildFrameResources();
 	BuildPSOs();
@@ -460,7 +459,7 @@ void LitWavesApp::UpdateMainPassCB(const GameTimer& gt)
 	XMVECTOR lightDir = -MathHelper::SphericalToCartesian(1.0f, mSunTheta, mSunPhi);
 
 	XMStoreFloat3(&mMainPassCB.Lights[0].Direction, lightDir);
-	mMainPassCB.Lights[0].Strength = { 1.0f, 1.0f, 0.9f };
+	mMainPassCB.Lights[0].Strength = { sinf(gt.TotalTime() * 5.0f ), 0.0f, 0.0f };
 
 	auto currPassCB = mCurrFrameResource->PassCB.get();
 	currPassCB->CopyData(0, mMainPassCB);
@@ -786,6 +785,7 @@ float LitWavesApp::GetHillsHeight(float x, float z)const
 
 XMFLOAT3 LitWavesApp::GetHillsNormal(float x, float z)const
 {
+	// find x and z components of tangent vector to specify tangent plane at surface point and then find surface normals of mountains
     // n = (-df/dx, 1, -df/dz)
     XMFLOAT3 n(
         -0.03f*z*cosf(0.1f*x) - 0.3f*cosf(0.1f*z),
