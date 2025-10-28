@@ -668,7 +668,7 @@ void CrateApp::BuildRenderItems()
 {
 	auto boxRitem = std::make_unique<RenderItem>();
 	boxRitem->ObjCBIndex = 0;
-	XMStoreFloat4x4(&boxRitem->TexTransform, XMMatrixScaling(4.0f, 4.0f, 1.0f));
+	XMStoreFloat4x4(&boxRitem->TexTransform, XMMatrixScaling(2.0f, 2.0f, 1.0f));
 	boxRitem->Mat = mMaterials["woodCrate"].get();
 	boxRitem->Geo = mGeometries["boxGeo"].get();
 	boxRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;

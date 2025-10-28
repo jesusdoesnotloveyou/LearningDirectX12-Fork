@@ -657,12 +657,11 @@ void ShadowMapApp::BuildRootSignature()
     CD3DX12_ROOT_PARAMETER slotRootParameter[5];
 
 	// Perfomance TIP: Order from most frequent to least frequent.
-    slotRootParameter[0].InitAsConstantBufferView(0);
-    slotRootParameter[1].InitAsConstantBufferView(1);
-    slotRootParameter[2].InitAsShaderResourceView(0, 1);
-	slotRootParameter[3].InitAsDescriptorTable(1, &texTable0, D3D12_SHADER_VISIBILITY_PIXEL);
-	slotRootParameter[4].InitAsDescriptorTable(1, &texTable1, D3D12_SHADER_VISIBILITY_PIXEL);
-
+    slotRootParameter[0].InitAsConstantBufferView(0); // cbPerObject
+    slotRootParameter[1].InitAsConstantBufferView(1); // cbPass
+    slotRootParameter[2].InitAsShaderResourceView(0, 1); // structured buffer
+	slotRootParameter[3].InitAsDescriptorTable(1, &texTable0, D3D12_SHADER_VISIBILITY_PIXEL); // gCubeMap, gShadowMap
+	slotRootParameter[4].InitAsDescriptorTable(1, &texTable1, D3D12_SHADER_VISIBILITY_PIXEL); // gTextureMaps
 
 	auto staticSamplers = GetStaticSamplers();
 

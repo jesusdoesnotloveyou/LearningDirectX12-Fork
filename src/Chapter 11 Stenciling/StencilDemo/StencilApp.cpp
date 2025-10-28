@@ -108,8 +108,6 @@ private:
     FrameResource* mCurrFrameResource = nullptr;
     int mCurrFrameResourceIndex = 0;
 
-    UINT mCbvSrvDescriptorSize = 0;
-
     ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
 
 	ComPtr<ID3D12DescriptorHeap> mSrvDescriptorHeap = nullptr;
@@ -190,10 +188,6 @@ bool StencilApp::Initialize()
 
     // Reset the command list to prep for initialization commands.
     ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
-
-    // Get the increment size of a descriptor in this heap type.  This is hardware specific, 
-	// so we have to query this information.
-    mCbvSrvDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	LoadTextures();
     BuildRootSignature();
@@ -660,19 +654,19 @@ void StencilApp::BuildDescriptorHeaps()
 	md3dDevice->CreateShaderResourceView(bricksTex.Get(), &srvDesc, hDescriptor);
 
 	// next descriptor
-	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
+	hDescriptor.Offset(1, mCbvSrvUavDescriptorSize);
 
 	srvDesc.Format = checkboardTex->GetDesc().Format;
 	md3dDevice->CreateShaderResourceView(checkboardTex.Get(), &srvDesc, hDescriptor);
 
 	// next descriptor
-	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
+	hDescriptor.Offset(1, mCbvSrvUavDescriptorSize);
 
 	srvDesc.Format = iceTex->GetDesc().Format;
 	md3dDevice->CreateShaderResourceView(iceTex.Get(), &srvDesc, hDescriptor);
 
 	// next descriptor
-	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
+	hDescriptor.Offset(1, mCbvSrvUavDescriptorSize);
 
 	srvDesc.Format = white1x1Tex->GetDesc().Format;
 	md3dDevice->CreateShaderResourceView(white1x1Tex.Get(), &srvDesc, hDescriptor);
@@ -1189,7 +1183,7 @@ void StencilApp::DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::
         cmdList->IASetPrimitiveTopology(ri->PrimitiveType);
 
 		CD3DX12_GPU_DESCRIPTOR_HANDLE tex(mSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
-		tex.Offset(ri->Mat->DiffuseSrvHeapIndex, mCbvSrvDescriptorSize);
+		tex.Offset(ri->Mat->DiffuseSrvHeapIndex, mCbvSrvUavDescriptorSize);
 
         D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress() + ri->ObjCBIndex*objCBByteSize;
 		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + ri->Mat->MatCBIndex*matCBByteSize;

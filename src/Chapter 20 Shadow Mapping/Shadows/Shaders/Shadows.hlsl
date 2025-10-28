@@ -39,7 +39,7 @@ VertexOut VS(VertexIn vin)
 // This is only used for alpha cut out geometry, so that shadows 
 // show up correctly.  Geometry that does not need to sample a
 // texture can use a NULL pixel shader for depth pass.
-void PS(VertexOut pin) 
+void PS(VertexOut pin)
 {
 	// Fetch the material data.
 	MaterialData matData = gMaterialData[gMaterialIndex];
@@ -56,5 +56,3 @@ void PS(VertexOut pin)
     clip(diffuseAlbedo.a - 0.1f);
 #endif
 }
-
-

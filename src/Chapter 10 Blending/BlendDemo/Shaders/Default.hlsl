@@ -134,7 +134,7 @@ float4 PS(VertexOut pin) : SV_Target
 	toEyeW /= distToEye; // normalize
 
     // Light terms.
-    float4 ambient = gAmbientLight*diffuseAlbedo;
+    float4 ambient = gAmbientLight * diffuseAlbedo;
 
     const float shininess = 1.0f - gRoughness;
     Material mat = { diffuseAlbedo, gFresnelR0, shininess };
