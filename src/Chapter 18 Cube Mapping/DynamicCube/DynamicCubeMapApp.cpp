@@ -19,7 +19,7 @@ using namespace DirectX::PackedVector;
 
 const int gNumFrameResources = 3;
 
-const UINT CubeMapSize = 512;
+const UINT CubeMapSize = 2048u;
 
 // Lightweight structure stores parameters to draw a shape.  This will
 // vary from app-to-app.
@@ -429,6 +429,12 @@ void DynamicCubeMapApp::OnKeyboardInput(const GameTimer& gt)
 
 	if(GetAsyncKeyState('D') & 0x8000)
 		mCamera.Strafe(10.0f*dt);
+
+	if (GetAsyncKeyState('E') & 0x8000)
+		mCamera.Up(10.0f * dt);
+
+	if (GetAsyncKeyState('Q') & 0x8000)
+		mCamera.Up(-10.0f * dt);
 
 	mCamera.UpdateViewMatrix();
 }
