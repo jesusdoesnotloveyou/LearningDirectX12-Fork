@@ -37,6 +37,9 @@ groupshared float4 gCache[CacheSize];
 void HorzBlurCS(int3 groupThreadID : SV_GroupThreadID,
 				int3 dispatchThreadID : SV_DispatchThreadID)
 {
+    uint width, height, numberOfLevels;
+    gInput.GetDimensions(0u, width, height, numberOfLevels);
+	
 	// Put in an array for each indexing.
 	float weights[11] = { w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10 };
 
@@ -57,12 +60,12 @@ void HorzBlurCS(int3 groupThreadID : SV_GroupThreadID,
 	if(groupThreadID.x >= N-gBlurRadius)
 	{
 		// Clamp out of bound samples that occur at image borders.
-		int x = min(dispatchThreadID.x + gBlurRadius, gInput.Length.x-1);
+		int x = min(dispatchThreadID.x + gBlurRadius, width - 1u);
 		gCache[groupThreadID.x+2*gBlurRadius] = gInput[int2(x, dispatchThreadID.y)];
 	}
 
 	// Clamp out of bound samples that occur at image borders.
-	gCache[groupThreadID.x+gBlurRadius] = gInput[min(dispatchThreadID.xy, gInput.Length.xy-1)];
+	gCache[groupThreadID.x+gBlurRadius] = gInput[min(dispatchThreadID.xy, uint2(width - 1u, height - 1u))];
 
 	// Wait for all threads to finish.
 	GroupMemoryBarrierWithGroupSync();
@@ -90,6 +93,9 @@ void VertBlurCS(int3 groupThreadID : SV_GroupThreadID,
 	// Put in an array for each indexing.
 	float weights[11] = { w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10 };
 
+    uint width, height, numberOfLevels;
+    gInput.GetDimensions(0u, width, height, numberOfLevels);
+	
 	//
 	// Fill local thread storage to reduce bandwidth.  To blur 
 	// N pixels, we will need to load N + 2*BlurRadius pixels
@@ -107,12 +113,12 @@ void VertBlurCS(int3 groupThreadID : SV_GroupThreadID,
 	if(groupThreadID.y >= N-gBlurRadius)
 	{
 		// Clamp out of bound samples that occur at image borders.
-		int y = min(dispatchThreadID.y + gBlurRadius, gInput.Length.y-1);
+		int y = min(dispatchThreadID.y + gBlurRadius, height-1u);
 		gCache[groupThreadID.y+2*gBlurRadius] = gInput[int2(dispatchThreadID.x, y)];
 	}
 	
 	// Clamp out of bound samples that occur at image borders.
-	gCache[groupThreadID.y+gBlurRadius] = gInput[min(dispatchThreadID.xy, gInput.Length.xy-1)];
+    gCache[groupThreadID.y + gBlurRadius] = gInput[min(dispatchThreadID.xy, uint2(width - 1u, height - 1u))];
 
 
 	// Wait for all threads to finish.
