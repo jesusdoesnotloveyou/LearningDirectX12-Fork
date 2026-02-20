@@ -119,14 +119,11 @@ float4 PS(VertexOut pin) : SV_Target
 		float2 tex = pin.TexC + i*texOffset;
 
 		float3 neighborNormal = gNormalMap.SampleLevel(gsamPointClamp, tex, 0.0f).xyz;
-        float  neighborDepth  = NdcDepthToViewDepth(
-            gDepthMap.SampleLevel(gsamDepthMap, tex, 0.0f).r);
+        float  neighborDepth  = NdcDepthToViewDepth(gDepthMap.SampleLevel(gsamDepthMap, tex, 0.0f).r);
 
-		//
 		// If the center value and neighbor values differ too much (either in 
 		// normal or depth), then we assume we are sampling across a discontinuity.
 		// We discard such samples from the blur.
-		//
 	
 		if( dot(neighborNormal, centerNormal) >= 0.8f &&
 		    abs(neighborDepth - centerDepth) <= 0.2f )
@@ -134,8 +131,7 @@ float4 PS(VertexOut pin) : SV_Target
             float weight = blurWeights[i + gBlurRadius];
 
 			// Add neighbor pixel to blur.
-			color += weight*gInputMap.SampleLevel(
-                gsamPointClamp, tex, 0.0);
+			color += weight*gInputMap.SampleLevel(gsamPointClamp, tex, 0.0);
 		
 			totalWeight += weight;
 		}

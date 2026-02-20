@@ -246,7 +246,7 @@ bool SsaoApp::Initialize()
     BuildFrameResources();
     BuildPSOs();
 
-    mSsao->SetPSOs(mPSOs["ssao"].Get(), mPSOs["ssaoBlur"].Get());
+    mSsao->SetPSOs(mPSOs.at("ssao").Get(), mPSOs.at("ssaoBlur").Get());
 
     // Execute the initialization commands.
     ThrowIfFailed(mCommandList->Close());

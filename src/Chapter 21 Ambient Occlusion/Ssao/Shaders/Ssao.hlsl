@@ -143,7 +143,7 @@ float4 PS(VertexOut pin) : SV_Target
 	for(int i = 0; i < gSampleCount; ++i)
 	{
 		// Are offset vectors are fixed and uniformly distributed (so that our offset vectors
-		// do not clump in the same direction).  If we reflect them about a random vector
+		// do not clump in the same direction). If we reflect them about a random vector
 		// then we get a random uniform distribution of offset vectors.
 		float3 offset = reflect(gOffsetVectors[i].xyz, randVec);
 	
@@ -170,7 +170,6 @@ float4 PS(VertexOut pin) : SV_Target
 
 		float3 r = (rz / q.z) * q;
 		
-		//
 		// Test whether r occludes p.
 		//   * The product dot(n, normalize(r - p)) measures how much in front
 		//     of the plane(p,n) the occluder point r is.  The more in front it is, the
@@ -180,7 +179,6 @@ float4 PS(VertexOut pin) : SV_Target
 		//   * The weight of the occlusion is scaled based on how far the occluder is from
 		//     the point we are computing the occlusion of.  If the occluder r is far away
 		//     from p, then it does not occlude it.
-		// 
 		
 		float distZ = p.z - r.z;
 		float dp = max(dot(n, normalize(r - p)), 0.0f);
