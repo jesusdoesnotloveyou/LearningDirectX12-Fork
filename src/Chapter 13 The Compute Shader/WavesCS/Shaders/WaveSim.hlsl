@@ -36,7 +36,7 @@ void UpdateWavesCS(int3 dispatchThreadID : SV_DispatchThreadID)
 	gOutput[int2(x,y)] = 
 		gWaveConstant0 * gPrevSolInput[int2(x,y)].r +
 		gWaveConstant1 * gCurrSolInput[int2(x,y)].r +
-		gWaveConstant2 *(
+		gWaveConstant2 * (
 			gCurrSolInput[int2(x,y+1)].r + 
 			gCurrSolInput[int2(x,y-1)].r + 
 			gCurrSolInput[int2(x+1,y)].r + 
