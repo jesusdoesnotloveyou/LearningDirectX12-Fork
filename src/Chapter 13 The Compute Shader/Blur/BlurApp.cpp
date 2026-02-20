@@ -315,7 +315,7 @@ void BlurApp::Draw(const GameTimer& gt)
 
 	// Prepare to copy blurred output to the back buffer.
 	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
-		D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST));
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST));
 
 	mCommandList->CopyResource(CurrentBackBuffer(), mBlurFilter->Output());
 
